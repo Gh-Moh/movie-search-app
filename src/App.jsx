@@ -7,7 +7,7 @@ import { useDebounce } from 'react-use'
 import { updateSearchCount, getTrendingMovies } from './appwrite.js'
 
 const App = () => {
-  const [searchTerm, setSerachTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [errMsg, setErrMsg] = useState('');
   const [isloading, setIsLoading] = useState(false);
   const [isTrendloading, setIsTrendLoading] = useState(false);
@@ -77,27 +77,32 @@ const App = () => {
           <header>
             <img src="hero.png" alt="hero" />
             <h1> Find <span className='text-gradient'>Movies</span>You'll Love Without the Hassle</h1>
-            <Search Term={searchTerm} setTerm={setSerachTerm} />
+            <Search Term={searchTerm} setTerm={setSearchTerm} />
           </header>
 
-
-          <section className='trending'>
-            <h2>Trending Movies</h2>
-            {
-            isTrendloading ? (<Spinner/>):
-            trendErrMsg ? (<p className='text-red-500'>{trendErrMsg}</p>):
-            (<ul>
-                {trendingMovies.map((movie, index) => 
-                <li key={movie.$id} >
-                   <p>{index + 1}</p>
-                   <img src={movie.posterUrl} alt={movie.title} />
-                </li>)}
-              </ul>)
-            }
-          </section>
+          {!searchTerm ? (
+            <section className='trending'>
+              <h2>Trending Movies</h2>
+              {
+              isTrendloading ? (<Spinner/>):
+              trendErrMsg ? (<p className='text-red-500'>{trendErrMsg}</p>):
+              (<ul>
+                  {trendingMovies.map((movie, index) => 
+                  <li key={movie.$id} >
+                    <p>{index + 1}</p>
+                    <img src={movie.posterUrl} alt={movie.title} />
+                  </li>)}
+                </ul>)
+              }
+            </section>
+          ) : (
+            <div className="trending" style={{ minHeight: '0', visibility: 'hidden' }}>
+              {/* Invisible placeholder to maintain layout */}
+            </div>
+          )}
 
           <section className='all-movies'>
-            <h2>All Movies</h2>
+            <h2>{searchTerm ? 'Search Results': 'All Movies'}</h2>
             {isloading ? (
               <Spinner />
             ) : errMsg ? (
